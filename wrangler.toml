@@ -1,0 +1,86 @@
+name = "openai-compatible-assistant"
+main = "src/index.ts"
+compatibility_date = "2025-08-23"
+compatibility_flags = ["global_fetch_strictly_public"]
+
+[assets]
+directory = "./public"
+
+# Worker Resources
+[build]
+command = "npm run build"
+
+
+# Observability and Monitoring
+[observability]
+enabled = true
+head_sampling_rate = 1.0  # Sample 100% of requests for development
+
+
+# Bindings
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "openai-compatible-assistant"
+
+# Environment Variables
+[vars]
+# Application Configuration
+NODE_ENV = "development"
+LOG_LEVEL = "info"
+LOG_REQUESTS = "true"
+LOG_ERRORS = "true"
+
+# CORS Configuration
+CORS_ORIGINS = "*"
+ENABLE_CORS = "true"
+
+# Security Configuration
+ENABLE_AUTH = "true"
+ENABLE_SECURITY_HEADERS = "true"
+ENABLE_REQUEST_LOGGING = "true"
+ENABLE_ERROR_TRACKING = "true"
+ENABLE_METRICS = "true"
+STRICT_TRANSPORT_SECURITY = "max-age=31536000; includeSubDomains"
+
+# Request Configuration
+MAX_REQUEST_SIZE = "10485760"  # 10MB
+REQUEST_TIMEOUT = "30000"      # 30 seconds
+
+# Rate Limiting Configuration
+ENABLE_RATE_LIMIT = "true"
+RATE_LIMIT_REQUESTS = "100"
+RATE_LIMIT_WINDOW_MS = "60000"  # 1 minute
+
+# File Upload Configuration
+MAX_FILE_SIZE = "26214400"      # 25MB
+ALLOWED_FILE_TYPES = "image/*,text/*,application/pdf,application/json"
+
+# Provider Configuration
+# OpenAI Provider
+PROVIDER_OPENAI_ENABLED = "false"  # Disabled by default, enable when API key is provided
+PROVIDER_OPENAI_BASE_URL = "https://api.openai.com/v1"
+
+# Gemini Provider
+PROVIDER_GEMINI_ENABLED = "false"  # Disabled by default, enable when API key is provided
+PROVIDER_GEMINI_BASE_URL = "https://generativelanguage.googleapis.com"
+
+# Common Provider Settings
+PROVIDER_TIMEOUT = "30000"        # 30 seconds
+PROVIDER_MAX_RETRIES = "3"
+
+# Fallback Configuration
+PROVIDER_FALLBACK_ENABLED = "true"
+PROVIDER_FALLBACK_MAX_RETRIES = "3"
+PROVIDER_FALLBACK_RETRY_DELAY = "1000"  # 1 second
+
+# Cron Triggers for Garbage Collection
+[triggers]
+# Daily GC at 2 AM UTC
+crons = ["0 2 * * *"]
+
+# Note: Secrets are configured using wrangler secret commands:
+# wrangler secret put GEMINI_API_KEY
+# wrangler secret put OPENAI_API_KEY (optional)
+# wrangler secret put API_KEY
+# wrangler secret put RATE_LIMIT_BYPASS_KEY
+# wrangler secret put GC_ADMIN_KEY
